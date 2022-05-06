@@ -150,6 +150,7 @@ pub trait Select {
 
         let cipher_string = r.read_string()?;
         let cipher = Self::select(pref.cipher, cipher_string);
+        debug!("Cipher: {:?}", cipher);
         if cipher.is_none() {
             debug!(
                 "Could not find common cipher, other side only supports {:?}, we only support {:?}",
