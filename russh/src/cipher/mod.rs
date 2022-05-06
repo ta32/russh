@@ -20,6 +20,7 @@ use tokio::io::{AsyncRead, AsyncReadExt};
 pub mod chacha20poly1305;
 pub mod aes256gcm;
 pub mod clear;
+pub mod aes256cbc;
 
 pub struct Cipher {
     pub name: Name,
@@ -33,6 +34,7 @@ pub enum OpeningCipher {
     Clear(clear::Key),
     Chacha20Poly1305(chacha20poly1305::OpeningKey),
     AES256GCM(aes256gcm::OpeningKey),
+    AES256CBC(aes256cbc::OpeningKey),
 }
 
 impl<'a> OpeningCipher {
@@ -41,6 +43,7 @@ impl<'a> OpeningCipher {
             OpeningCipher::Clear(ref key) => key,
             OpeningCipher::Chacha20Poly1305(ref key) => key,
             OpeningCipher::AES256GCM(ref key) => key,
+            OpeningCipher::AES256CBC(ref key) => key,
         }
     }
 }
@@ -49,6 +52,7 @@ pub enum SealingCipher {
     Clear(clear::Key),
     Chacha20Poly1305(chacha20poly1305::SealingKey),
     AES256GCM(aes256gcm::SealingKey),
+    AES256CBC(aes256cbc::SealingKey),
 }
 
 impl<'a> SealingCipher {
@@ -57,6 +61,7 @@ impl<'a> SealingCipher {
             SealingCipher::Clear(ref key) => key,
             SealingCipher::Chacha20Poly1305(ref key) => key,
             SealingCipher::AES256GCM(ref key) => key,
+            SealingCipher::AES256CBC(ref key) => key,
         }
     }
 }
