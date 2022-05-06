@@ -411,6 +411,7 @@ pub fn check_known_hosts(host: &str, port: u16, pubkey: &key::PublicKey) -> Resu
 }
 
 #[cfg(test)]
+#[cfg(not(windows))]
 mod test {
     extern crate tempdir;
     use super::*;
