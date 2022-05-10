@@ -16,10 +16,13 @@
 extern crate crypto;
 use crypto::{ buffer, aes, blockmodes };
 use crypto::buffer::{ ReadBuffer, WriteBuffer, BufferResult };
+use sha2::Sha256;
+use hmac::{Hmac, Mac, NewMac};
+
 use super::super::Error;
 use sodium::random::randombytes;
 
-const TAG_LEN: usize = 0;
+const TAG_LEN: usize = 32;
 pub const CRYPTO_AES256CBC_KEYBYTES: u32 = 32;
 pub const CRYPTO_AES256CBC_NSECBYTES: u32 = 16;
 
@@ -160,6 +163,14 @@ impl super::SealingKey for SealingKey {
                 BufferResult::BufferOverflow => { }
             }
         }
+        // add the HMAC-SHA256 tag
+        let mut tag = [0; TAG_LEN];
+        type HmacSha256 = Hmac<Sha256>;
+        let mut mac = HmacSha256::new_varkey(self.key.0.as_ref()).unwrap();
+        mac.update(final_result.as_ref());
+        let result = mac.finalize();
+        tag.copy_from_slice(result.into_bytes().as_ref());
+        final_result.extend(tag.iter().map(|&i| i));
         plaintext_in_ciphertext_out.copy_from_slice(&final_result);
     }
 }
